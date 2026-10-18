@@ -33,8 +33,16 @@
 | 签名 | 已用**发布密钥**签名（不是调试版） |
 | 安装方式 | 下载 APK → 传到手机 → 点开安装 → 首次需在系统里允许「安装未知来源应用」 |
 
-**验证下载是否完整**（可选）：对比 Release 页面上的 SHA-256。
-本版本证书指纹 `SHA-256`：`3657076B3B9F39929EDA401F73D46A13E34A504F8DE4784B1D793530065B724B`
+**验证下载是否完整**（可选）：Release 页面上会显示文件的 `sha256`，和你手机/电脑算出来的一致就行。
+
+| 指纹 | 值 | 会不会变 |
+|---|---|---|
+| **APK 文件 SHA-256** | `af5fb3895b969c7b5ba160641b4b8666aa90041d06246a3f0b2d74e8478be867` | **每个版本都会变** |
+| **签名证书 SHA-256** | `3657076B3B9F39929EDA401F73D46A13E34A504F8DE4784B1D793530065B724B` | 同一把密钥，**长期不变** |
+
+> - **文件 SHA-256** 用于核对"下载有没有损坏 / 有没有被换掉"，**只对当前这个版本有效**。
+> - **证书 SHA-256** 是"这个 App 是谁签的"，同一把密钥签的所有版本都一样。
+>   安卓安装时会自动校验签名，签名的包无法覆盖安装。
 
 > ⚠️ **装过更早的调试版？** 必须先**卸载**旧版再装这个版本 ——
 > 调试签名和发布签名不同，不能覆盖安装。
@@ -110,75 +118,9 @@
 
 ---
 
-## 怎么编译
+## 更新日志
 
-**用 Android Studio（推荐）**
-
-```
-打开 PhotoFinder
-→ 等右下角进度条跑完
-→ 手机插上数据线（先开 USB 调试）
-→ 点绿色三角
-```
-
-**命令行**
-
-```powershell
-$env:JAVA_HOME        = '<JDK 目录>'
-$env:GRADLE_USER_HOME = '<Gradle 缓存目录>'   # 可选，默认在用户目录下
-Set-Location '<项目目录>'
-
-# 调试包（直接能装，用系统自带的调试签名）
-.\gradlew.bat --no-daemon --console=plain assembleDebug
-# 产物：app\build\outputs\apk\debug\app-debug.apk
-
-# 正式包（需要自己配签名，见下）
-.\gradlew.bat --no-daemon --console=plain assembleRelease
-# 产物：app\build\outputs\apk\release\app-release.apk
-```
-
-> ⚠️ 如果项目路径含中文，`gradle.properties` 里已经开了
-> `android.overridePathCheck=true`；挪到纯英文路径后这一行可以删掉。
->
-> ⚠️ 另一个开关 `android.disallowKotlinSourceSets=false` 是因为
-> AGP 9 内置 Kotlin 支持会和 KSP/Room 的代码生成方式打架，官方文档给的解法。
->
-> ⚠️ 调试包和正式包都约 **72 MiB**（正式版**没有**开代码压缩，见下）。
-
-> ⚠️ **为什么不开代码压缩（R8）**：开启后安装包能小到 49 MiB，但会做**类重新打包**，
-> 破坏 Kotlin 标准库内部类的包级访问权限，导致**一启动就崩**
-> （`IllegalAccessError: Class kotlin.text.k extended by class mj1 is inaccessible`）。
-> 这种问题**编译期完全看不出来**，只有真机运行才暴露，所以这里选择了稳定优先。
-> 想瘦身请走「按 CPU 架构拆分 APK」这条路。
-
-### 怎么打正式签名包
-
-1. 生成一个 keystore（**放在项目目录之外**，别提交）：
-   ```powershell
-   keytool -genkeypair -v -keystore D:\keystore\photofinder-release.jks `
-     -alias photofinder -keyalg RSA -keysize 4096 -validity 10000 `
-     -storetype PKCS12 -dname "CN=PhotoFinder, O=PhotoFinder, C=CN"
-   ```
-2. 在项目根目录新建 `keystore.properties`（已在 `.gitignore` 里，不会上传）：
-   ```properties
-   storeFile=D:/keystore/photofinder-release.jks
-   storePassword=你的密码
-   keyAlias=photofinder
-   keyPassword=你的密码
-   ```
-3. `gradlew assembleRelease`
-
-> 🔐 **keystore 和密码一定要备份**。丢了就再也签不出同签名的更新包，
-> 用户只能卸载重装。
-
----
-
-## 文档
-
-- [技术方案.md](docs/技术方案.md) —— 架构、数据表、每处设计的原因
-- [环境搭建.md](docs/环境搭建.md) —— 从零装开发工具
-- [开发日志.md](docs/开发日志.md) —— 按时间顺序的完整改动记录（很长，含所有踩坑过程）
-- [CHANGELOG.md](CHANGELOG.md) —— 每个版本改了什么
+每个版本改了什么，见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 

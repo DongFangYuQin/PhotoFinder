@@ -3,8 +3,6 @@
 本文件记录每个版本的变化。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-更细的开发过程（每一轮的思路、踩过的坑）在 [docs/开发日志.md](docs/开发日志.md)。
-
 ---
 
 ## [未发布]
