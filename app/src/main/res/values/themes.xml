@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App 的外观主题。界面本身是 Compose 画的，这里主要管启动时的底色。 -->
+    <style name="Theme.PhotoFinder" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

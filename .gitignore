@@ -1,0 +1,38 @@
+# 编译产物
+*.iml
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+release/
+.kotlin/
+
+# 安装包：不提交（需要的话作为 Release 附件发布）
+*.apk
+*.aab
+
+# 密钥：绝对不能上传
+*.jks
+*.keystore
+keystore.properties
+secrets.properties
+secrets.xml
+api-keys.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.hprof
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志
+*.log
+
+# 内部文档：只在自己电脑上留着，不公开
+docs/继续开发.md
+docs/上传GitHub.md

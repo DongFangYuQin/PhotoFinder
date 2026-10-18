@@ -1,0 +1,74 @@
+[versions]
+# ============================================================
+#  版本清单
+#  ⚠️ 这些版本号是照着你电脑上"已经能跑通"的项目抄的，别凭记忆改。
+#     参考：D:\temp\gradle\libs.versions.toml（你建模板时生成的）
+# ============================================================
+agp = "9.4.1"
+# ⚠️ Kotlin 版本必须和 AGP 内置的一致！
+# 模板里生成的是 2.2.10，但 AGP 9.4.1 实际内置 Kotlin 2.4.10，
+# 用 2.2.10 会导致"编译器 2.2 读不懂 2.4 的基础库"，报一堆假错误。
+kotlin = "2.4.10"
+# KSP 是"注解处理器"，Room 数据库靠它自动生成代码。
+# ⚠️ 从 2.3.x 起 KSP 改用独立版本号了，不再跟 Kotlin 版本绑定。
+#    2.3.10 起明确支持 Kotlin 2.4 和 AGP 9 的内置 Kotlin，所以用最新稳定版。
+ksp = "2.3.12"
+composeBom = "2026.02.01"
+
+# 基础库（照抄模板）
+coreKtx = "1.10.1"
+lifecycleRuntimeKtx = "2.6.1"
+activityCompose = "1.8.0"
+
+# 我们额外要用的（版本号都查过官方仓库的最新稳定版）
+lifecycleViewmodelCompose = "2.9.4"
+room = "2.8.5"
+datastore = "1.2.1"
+coil = "3.6.3"
+okhttp = "5.2.1"
+# 手机本地的文字识别（Google ML Kit 中文包，离线、免费、不上传）
+mlkitTextChinese = "16.0.1"
+
+[libraries]
+# ---------- 界面 ----------
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+# 图标（返回箭头等）。版本由 Compose 版本表统一管理，不用写版本号。
+androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+# 左右滑动切图要用（从 Compose 1.4 起从 material 搬到了 foundation）
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+
+# ---------- 手机本地数据库（存"照片目录"） ----------
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# ---------- 存设置（比如以后要填的 API 密钥） ----------
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# ---------- 显示图片 ----------
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+# GIF 动图解码器（不加这个，GIF 只显示第一帧、不会动）
+coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
+
+# ---------- 联网（阶段 5 接 AI 时用，先备着） ----------
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+# ---------- 识别图里的文字（手机本地跑，不用联网、不花钱） ----------
+# 中文包（也认英文和数字）
+mlkit-text-recognition-chinese = { group = "com.google.mlkit", name = "text-recognition-chinese", version.ref = "mlkitTextChinese" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

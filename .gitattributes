@@ -1,0 +1,29 @@
+# 让 Git 统一处理换行，避免 Windows / macOS 互相干扰
+* text=auto
+
+# 源码和文档按文本处理
+*.kt        text
+*.kts       text
+*.xml       text
+*.json      text
+*.md        text
+*.properties text
+*.gradle    text
+
+# 二进制文件不要动
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.webp      binary
+*.gif       binary
+*.jar       binary
+*.apk       binary
+*.aab       binary
+*.jks       binary
+*.keystore  binary
+
+# 脚本保持 LF，免得在 WSL / Mac 上跑不了
+*.sh        text eol=lf
+gradlew     text eol=lf
+*.bat       text eol=crlf
+gradlew.bat text eol=crlf

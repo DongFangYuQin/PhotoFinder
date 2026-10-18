@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  自适应图标（安卓 8.0 及以上）。
+
+  背景用纯白（和图标画本身的底色一致），前景是角色图。
+  不同厂商的桌面会把图标裁成圆形 / 圆角方形 / 方形，
+  所以前景内容只占画布的 92%，四周留一圈白边，避免裁到头发。
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

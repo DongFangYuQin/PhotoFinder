@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      权限说明（这一块很关键，缺一个都会导致"找不到相册"）：
+
+      READ_MEDIA_IMAGES
+          读取相册里的图片。安卓 13（API 33）以上要声明这个。
+          ⚠️ 光声明不够，还必须在 App 运行时弹窗向用户申请 —— 代码见 ui/MediaPermissions.kt
+
+      READ_MEDIA_VISUAL_USER_SELECTED
+          安卓 14（API 34）以上新增。用户可以选择"只允许访问部分照片"，
+          这种叫"部分授权"，也能正常用，只是能看到的照片少了。
+          如果只声明了上面那个、没声明这个，系统在某些机型上会表现异常。
+
+      注意：网络权限见下面单独一段的说明。
+            图里的**文字识别完全在本地**，不联网；
+            只有「按图片内容搜索」这一步会联网，而且只发筛出来的少量候选图。
+    -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <!--
+      兼容很老的手机（安卓 12 及以下）用的旧权限。
+      系统会自动忽略用不上的那一条，所以写上不影响新手机。
+    -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!--
+      ⬇️ 下面这条是"删除"标记，不是"申请"。
+      显示图片用的库会自动塞一条安卓 13+ 的内部权限，这里剔掉。
+    -->
+    <uses-permission
+        android:name="com.atri.photofinder.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        tools:node="remove" />
+
+    <!--
+      ⚠️ 联网权限（2026-10 加上）。
+
+      **为什么现在需要它**：
+        「按图片内容搜索」要把**筛出来的少量候选图**发给云端 AI 比对，
+        这一步必须联网。
+
+      **照片不会乱跑**：
+        - 只有你**主动点"开始搜索"**时才会联网
+        - 只会发**你设置的条件筛出来的那几十张**（不是整个相册）
+        - 图里的**文字识别依然完全在本地**，不联网
+
+      说明：这条其实是被库（OkHttp/Coil）自动带进来的，
+      但为了"权限清单里写得清楚"，这里显式声明一次。
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".PhotoFinderApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PhotoFinder">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.PhotoFinder">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>
