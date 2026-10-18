@@ -45,8 +45,8 @@ android {
         // 代码里已经按版本做了兼容（安卓 13+ 用 READ_MEDIA_IMAGES，更早用 READ_EXTERNAL_STORAGE）。
         minSdk = 29
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.0.0"
+        versionCode = 3
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

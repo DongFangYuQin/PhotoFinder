@@ -881,14 +881,33 @@ class PhotoViewModel(app: Application) : AndroidViewModel(app) {
         _aiRemainingCount.value = (total - aiSearchedIds.size).coerceAtLeast(0)
     }
 
+    /**
+     * 清掉上一次搜索留下的**所有可见状态**。
+     *
+     * ⚠️ 踩过的 bug（用户实测）：
+     *    这里原来只清了「结果 / 说明 / 是否搜过 / 进度」，
+     *    漏了「被排除的图 / 被排除的开关 / AI 原始回复」——
+     *    于是点「重新开始」之后，**被排除的那几张图和原始回复还挂在界面上**，
+     *    看起来像"没清干净"。
+     *
+     * 原则：**只要界面上看得见，就必须在这里清掉**。
+     */
     fun clearAiResult() {
         _aiResults.value = emptyList()
+        _aiRejected.value = emptyList()
+        _aiShowRejected.value = false
         _aiMessage.value = null
         _aiHasSearched.value = false
         _aiStage.value = null
+        _aiRawResponse.value = ""
     }
 
-    /** 完全重新开始：忘掉"已比对过"的记录，下次从头搜 */
+    /**
+     * 完全重新开始：忘掉"已比对过"的记录 + 清空界面上所有搜索结果。
+     *
+     * 会清：已比对记录、找到的图、**被排除的图**、结果说明、**AI 原始回复**、进度文字。
+     * 不会清：搜索描述、筛选条件、**已缓存的理解结果**（描述没变，标准应该保持一致）。
+     */
     fun resetAiProgress() {
         aiSearchedIds.clear()
         clearAiResult()
