@@ -22,7 +22,7 @@
 | 工具 | 版本 |
 |---|---|
 | Android Studio | 最新稳定版即可 |
-| Android SDK | API 36（compileSdk / targetSdk 37） |
+| Android SDK | API 37（compileSdk / targetSdk 37，minSdk 29） |
 | JDK | 21 或更高（项目用 Java 25 toolchain 也能跑） |
 | Gradle | 用仓库自带的 `gradlew`，不用另装 |
 

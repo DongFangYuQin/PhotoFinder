@@ -9,12 +9,35 @@
 文字识别完全在手机本地完成（不联网、不花钱、照片不上传）<br>
 只有「按图片内容搜索」才会联网调用 AI
 
-![Android](https://img.shields.io/badge/Android-16%2B-3DDC84?logo=android&logoColor=white)
+![Android](https://img.shields.io/badge/Android-10%2B-3DDC84?logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4?logo=jetpackcompose&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
+<a href="https://github.com/DongFangYuQin/PhotoFinder/releases/latest">
+  <img src="https://img.shields.io/github/v/release/DongFangYuQin/PhotoFinder?label=%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E5%8C%85&color=3E6E96&style=for-the-badge" alt="下载">
+</a>
+
 </div>
+
+---
+
+## 下载安装
+
+**👉 [点这里下载最新版 APK](https://github.com/DongFangYuQin/PhotoFinder/releases/latest)**
+
+| 项 | 说明 |
+|---|---|
+| 系统要求 | **安卓 10（API 29）及以上** |
+| 安装包大小 | 约 **49 MB**（文字识别模型占大头） |
+| 签名 | 已用**发布密钥**签名（不是调试版） |
+| 安装方式 | 下载 APK → 传到手机 → 点开安装 → 首次需在系统里允许「安装未知来源应用」 |
+
+**验证下载是否完整**（可选）：对比 Release 页面上的 SHA-256。
+本版本证书指纹 `SHA-256`：`3657076B3B9F39929EDA401F73D46A13E34A504F8DE4784B1D793530065B724B`
+
+> ⚠️ **装过更早的调试版？** 必须先**卸载**旧版再装这个版本 ——
+> 调试签名和发布签名不同，不能覆盖安装。
 
 ---
 
@@ -76,14 +99,14 @@
 
 | 项 | 版本 |
 |---|---|
-| Android | **16（API 36）及以上** |
+| Android | **10（API 29）及以上**；编译目标 API 37 |
 | AGP / Kotlin / KSP | 9.4.1 / 2.4.10 / 2.3.12 |
 | Gradle | 9.6.0 |
 | Compose BOM / Room / Coil / OkHttp | 2026.02.01 / 2.8.5 / 3.6.3 / 5.2.1 |
-| Java | 25（`<JDK 目录>`） |
+| Java | 17 及以上（本项目用 Java 25 toolchain 编译通过） |
 
-权限只有 5 个：`READ_MEDIA_IMAGES`、`READ_MEDIA_VISUAL_USER_SELECTED`、
-`READ_EXTERNAL_STORAGE`（≤32）、`INTERNET`、`ACCESS_NETWORK_STATE`。
+权限只有 5 个：`READ_MEDIA_IMAGES`、`READ_MEDIA_VISUAL_USER_SELECTED`（安卓 14+）、
+`READ_EXTERNAL_STORAGE`（安卓 12 及以下）、`INTERNET`、`ACCESS_NETWORK_STATE`。
 
 ---
 
@@ -104,8 +127,14 @@
 $env:JAVA_HOME        = '<JDK 目录>'
 $env:GRADLE_USER_HOME = '<Gradle 缓存目录>'   # 可选，默认在用户目录下
 Set-Location '<项目目录>'
+
+# 调试包（直接能装，用系统自带的调试签名）
 .\gradlew.bat --no-daemon --console=plain assembleDebug
 # 产物：app\build\outputs\apk\debug\app-debug.apk
+
+# 正式包（需要自己配签名，见下）
+.\gradlew.bat --no-daemon --console=plain assembleRelease
+# 产物：app\build\outputs\apk\release\app-release.apk
 ```
 
 > ⚠️ 如果项目路径含中文，`gradle.properties` 里已经开了
@@ -114,8 +143,27 @@ Set-Location '<项目目录>'
 > ⚠️ 另一个开关 `android.disallowKotlinSourceSets=false` 是因为
 > AGP 9 内置 Kotlin 支持会和 KSP/Room 的代码生成方式打架，官方文档给的解法。
 >
-> ⚠️ 调试版约 **80 MB**：文字识别模型和 ML Kit 本地库占了大头，属正常。
-> 正式版能小很多（可做 ABI 拆分、去掉调试符号）。
+> ⚠️ 调试包约 **80 MB**，正式包约 **49 MB**（正式包会做代码压缩）。
+
+### 怎么打正式签名包
+
+1. 生成一个 keystore（**放在项目目录之外**，别提交）：
+   ```powershell
+   keytool -genkeypair -v -keystore D:\keystore\photofinder-release.jks `
+     -alias photofinder -keyalg RSA -keysize 4096 -validity 10000 `
+     -storetype PKCS12 -dname "CN=PhotoFinder, O=PhotoFinder, C=CN"
+   ```
+2. 在项目根目录新建 `keystore.properties`（已在 `.gitignore` 里，不会上传）：
+   ```properties
+   storeFile=D:/keystore/photofinder-release.jks
+   storePassword=你的密码
+   keyAlias=photofinder
+   keyPassword=你的密码
+   ```
+3. `gradlew assembleRelease`
+
+> 🔐 **keystore 和密码一定要备份**。丢了就再也签不出同签名的更新包，
+> 用户只能卸载重装。
 
 ---
 
