@@ -45,8 +45,8 @@ android {
         // 代码里已经按版本做了兼容（安卓 13+ 用 READ_MEDIA_IMAGES，更早用 READ_EXTERNAL_STORAGE）。
         minSdk = 29
         targetSdk = 37
-        versionCode = 3
-        versionName = "1.0.1"
+        versionCode = 4
+        versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -69,10 +69,26 @@ android {
             if (hasSigningConfig) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            // 正式版会做代码压缩，让安装包更小
+            // ============================================================
+            // ⚠️ 代码压缩已**关闭**（曾经打开过，导致正式版一启动就闪退）
+            //
+            // 崩溃日志：
+            //   java.lang.IllegalAccessError:
+            //   Class kotlin.text.k extended by class mj1 is inaccessible
+            //
+            // 原因：AGP 9 的 optimization 会做**类重新打包**（把类塞进扁平包、
+            // 改成单字母名）。Kotlin 标准库里有些**包级私有**的内部类
+            // 被别的类继承，一旦搬家，包级访问权限就失效了 → JVM 抛 IllegalAccessError。
+            //
+            // 调试版没开压缩所以一直正常，问题只在正式包出现 —— 这类 bug
+            // **编译期完全看不出来**，只有真机跑才会暴露。
+            //
+            // 代价：正式包从 49 MB 变回约 78 MB。想再瘦下来，
+            // 正确的路子是「按 CPU 架构拆分 APK」（四种架构的原生库各占 11 MB），
+            // 而不是重新打开全局压缩。
+            // ============================================================
             optimization {
-                enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                enable = false
             }
         }
     }
